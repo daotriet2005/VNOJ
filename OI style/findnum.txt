@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+ll out,n;
+const int snt[10]={2,3,5,7,11,13,17,19,23,29};
+void dfs(int i, ll val, int souoc)
+{
+    if (souoc==n)
+    {
+        out=min(out,val);
+        return;
+    }
+    int j=2;
+    while (souoc*j<=n)
+    {
+        val*=snt[i];
+        if (val>out) break;
+        dfs(i+1,val,souoc*j);
+        j++;
+    }
+}
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cin>>n;
+    out=1e18;
+    dfs(0,1,1);
+    cout<<out;
+    return 0;
+}

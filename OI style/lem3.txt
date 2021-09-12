@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+//typedef pair<ll, ll> data;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll MOD=1e9+7;
+const ll maxN=2e5+5;
+ll a[20][20],n,dp[100005][20];
+void setup()
+{
+    cin>>n; //cout<<n<<endl;
+    fore(i,0,n-1)
+        fore(j,0,n-1)
+            cin>>a[i][j];
+    fore(i,0,(1<<n)-1)
+        fore(j,0,n-1)
+            dp[i][j]=oo;
+    fore(i,0,n-1)
+        dp[(1<<i)][i]=0;
+    return;
+}
+ll path(int bitmask, int cur) // current node = path's end node
+{
+    //cout<<bitmask<<" "<<cur<<endl;
+    if (dp[bitmask][cur]<oo) return dp[bitmask][cur];
+    int res = bitmask &~(1<<cur);
+    //cout<<res<<endl;
+    fore(i,0,n)
+    if ((1<<i) & res)
+        dp[bitmask][cur]=min(dp[bitmask][cur],path(res,i)+a[i][cur]);
+    //cout<<"end"<<endl;
+    return dp[bitmask][cur];
+}
+ll solve()
+{
+    setup();
+    ll ans=oo;
+    fore(i,0,n-1)
+    {
+        //cout<<(1<<n)-1<<" "<<i<<" "<<n<<endl;
+        ans=min(ans,path((1<<n)-1,i));
+    }
+    return ans;
+}
+int main() {
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    int t; t=1 ;
+    while (t--)
+        cout<<solve();//cout<<solve()<<endl;
+    return 0;
+}

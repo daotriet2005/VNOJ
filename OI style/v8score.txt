@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define pu push
+int a[25][25],dp[25][1005],n,k,s;
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cin>>s>>k>>n;
+    for (int j=1;j<=n;j++)
+    for (int i=1;i<=k;i++)
+            cin>>a[i][j];
+    for (int i=0;i<=k;i++)
+        for (int j=0;j<=s;j++)
+            dp[i][j]=1e9;
+    dp[0][0]=0;
+    for (int i=1;i<=k;i++)
+        for (int j=1;j<=n;j++)
+            for (int p=0;p<=s-a[i][j];p++)
+                if (dp[i-1][p]<=a[i][j])
+                    dp[i][p+a[i][j]]=min(dp[i][p+a[i][j]],a[i][j]);
+    /*for (int p=0;p<=s;p++)
+    {
+        for (int j=1;j<=k;j++)
+            if (dp[j][p]<1e9)
+            cout<<p<<"/"<<dp[j][p]<<" ";
+        cout<<endl;
+    }*/
+    stack<int> out;
+    if (dp[k][s]<1e9)
+    {
+        cout<<"YES"<<endl;
+        while (s>0)
+        {
+            out.pu(dp[k][s]);
+            s-=dp[k][s];
+            k--;
+        }
+        while (!out.empty())
+        {
+            cout<<out.top()<<" ";
+            out.pop();
+        }
+    }
+    else cout<<"NO";
+
+    return 0;
+}

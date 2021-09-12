@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+typedef pair<ll, pair<ll, ll> > pii;
+typedef vector <int> vi;
+#define forw(i,a,b) for (ll i=a;i<=(b);i++)
+#define forb(i,a,b) for (ll i=a;i>=(b);i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=INT_MAX;
+const ll mod=1e9;
+const int base=31;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+// custom
+const ll maxN=4e6+5;
+typedef pair<int, vi > super;
+/////
+map< vi , int  > save;
+int b[100],a[10][10],n,m;
+vi res;
+int get(vector <int> res)
+{
+    if (save.find(res)==save.end()) return oo;
+    return save[res];
+}
+void solve()
+{
+    while (cin>>b[++m])
+    // calc n
+    forw(i,1,7)
+    if (m==i*(i+1))
+    {
+        n=i;
+        break;
+    }
+
+    // calc matrix
+    forw(i,1,n)
+        res.pb(b[i]);
+    forw(j,1,n)
+        forw(p,1,n)
+            a[j][p]=b[j*n+p];
+
+    // dijk
+    priority_queue<super, vector <super> , greater<super> > p;
+    p.pu({0,res});
+    save[res]=0;
+    while (!p.empty())
+    {
+        ll val=p.top().fi;
+        res= p.top().se;
+        p.pop();
+        if (val>get(res)) continue;
+        //cout<<val<<endl;
+        if (is_sorted(all(res)))
+        {
+            cout<<val<<endl;
+            break;
+        }
+        vi tmp=res;
+        forw(i,0,n-1)
+            forw(j,0,n-1)
+                if (i!=j)
+                {
+                    swap(tmp[i],tmp[j]);
+                    if (val+a[i+1][j+1]<get(tmp))
+                    {
+                        save[tmp]=val+a[i+1][j+1];
+                        p.pu({val+a[i+1][j+1],tmp});
+                    }
+                    swap(tmp[i],tmp[j]);
+                }
+    }
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

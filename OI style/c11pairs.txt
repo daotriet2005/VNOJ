@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+typedef pair<ll, string> super;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pub push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+const ll oo=1e18;
+const ll MOD=1e9+7;
+ll n,a[500005],same_height[500005],ans;
+void solve()
+{
+    cin>>n;
+    deque<int> p;
+    fore(i,1,n)
+    {
+        cin>>a[i];
+        while (!p.empty() && a[p.back()]<a[i])
+        {
+            ans+=same_height[p.back()];
+            p.pob();
+        }
+        same_height[i]=1;
+        if (!p.empty() && a[p.back()]==a[i])
+        {
+            same_height[i]+=same_height[p.back()];
+            ans+=same_height[p.back()];
+            p.pob();
+        }
+        if (!p.empty() && a[p.back()]>a[i]) ans++;
+        p.pub(i);
+    }
+    cout<<ans;
+}
+int main()
+{
+    fast;
+    solve();
+    return 0;
+}

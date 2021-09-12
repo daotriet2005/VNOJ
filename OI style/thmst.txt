@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+typedef pair<ll, pair<ll, ll> > pii;
+#define forw(i,a,b) for (int i=a;i<=b;i++)
+#define forb(i,a,b) for (int i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const ll maxN=5e4+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+const ll base=31;
+ll n,father[maxN],num[maxN];
+int findFather(int u)
+{
+    if (father[u]==u) return u;
+    return father[u]=findFather(father[u]);
+}
+void solve()
+{
+    cin>>n;
+    vector <pii> p;
+    forw(i,1,n)
+    {
+        father[i]=i;
+        num[i]=1;
+    }
+    forw(i,1,n-1)
+    {
+        ll u,v,z;
+        cin>>u>>v>>z;
+        p.pb({z,{u,v}});
+    }
+    sort(all(p));
+    ll ans=0;
+    for(auto res:p)
+    {
+        ll val=res.fi;
+        int u=res.se.fi;
+        int v=res.se.se;
+        int father_u=findFather(u);
+        int father_v=findFather(v);
+        ans+=(val+1)*(num[father_u]*num[father_v]-1)+val;
+        father[father_v]=father_u;
+        num[father_u]+=num[father_v];
+    }
+    cout<<ans<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

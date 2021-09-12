@@ -1,0 +1,103 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e14;
+const ll mod=1000001;
+const ll maxN=3e5+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+const ll base=31;
+int max1[4*maxN],min1[4*maxN],ri[maxN],le[maxN],a[maxN],n,k,ans;
+void init(int id, int l, int r)
+{
+    if (l==r)
+    {
+        max1[id]=min1[id]=a[r];
+        return;
+    }
+    int mid=(l+r)/2;
+    init(id*2,l,mid);
+    init(id*2+1,mid+1,r);
+    max1[id]=max(max1[id*2],max1[id*2+1]);
+    min1[id]=min(min1[id*2],min1[id*2+1]);
+    return;
+}
+int get_max(int id, int l, int r, int u, int v)
+{
+    if (u<=l && r<=v) return max1[id];
+    if (v<l || r<u) return INT_MIN;
+    int mid=(l+r)/2;
+    return max(get_max(id*2,l,mid,u,v),get_max(id*2+1,mid+1,r,u,v));
+}
+int get_min(int id, int l, int r, int u, int v)
+{
+    if (u<=l && r<=v) return min1[id];
+    if (v<l || r<u) return INT_MAX;
+    int mid=(l+r)/2;
+    return min(get_min(id*2,l,mid,u,v),get_min(id*2+1,mid+1,r,u,v));
+}
+void solve()
+{
+    cin>>n>>k;
+    forw(i,1,n)
+        cin>>a[i];
+    init(1,1,n);
+    int l=1;
+    int ma=0;
+    int mi=0;
+    forw(r,1,n)
+    {
+        ma=get_max(1,1,n,l,r);
+        mi=get_min(1,1,n,l,r);
+        while (l<r && ma-mi>k)
+        {
+            l++;
+            ma=get_max(1,1,n,l,r);
+            mi=get_min(1,1,n,l,r);
+        }
+        le[r]=r-l+1;
+    }
+    int r=n;
+    forb(l,n,1)
+    {
+        ma=get_max(1,1,n,l,r);
+        mi=get_min(1,1,n,l,r);
+        while (l<r && ma-mi>k)
+        {
+            r--;
+            ma=get_max(1,1,n,l,r);
+            mi=get_min(1,1,n,l,r);
+        }
+        ri[l]=r-l+1;
+    }
+    forw(i,1,n)
+        le[i]=max(le[i],le[i-1]);
+    forb(i,n,1)
+        ri[i]=max(ri[i],ri[i+1]);
+    forw(i,1,n-1)
+        ans=max(ans,le[i]+ri[i+1]);
+    cout<<ans<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

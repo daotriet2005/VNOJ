@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<ll, ll> data;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll MOD=1e9+7;
+const ll maxN=2e5+5;
+ll a[10][10005],n;
+vector <int> save;
+ll ok(int mask, int x)
+{
+    ll res=0;
+    fore(i,0,7)
+    {
+        if (((1<<i)&mask) && (1<<(i+1)&mask)) return -oo;
+        if ((1<<i)&mask)
+            res+=a[i][x];
+    }
+    return max(res,-oo);
+}
+void solve()
+{
+    cin>>n;
+    ll tmp=-oo;
+    ll ans=-oo;
+    fore(i,0,7)
+        fore(j,0,n-1)
+        {
+            cin>>a[i][j];
+            tmp=max(tmp,a[i][j]);
+        }
+    vector <ll> dp(1<<8,0);
+    fore(mask,0,(1<<8)-1)
+    {
+        ll res=ok(mask,0);
+        dp[mask]=res;
+        if (res!=-oo)
+            save.pb(mask);
+    }
+    fore(pos,1,n-1)
+    {
+        vector <ll> new_dp(1<<8,-oo);
+        for(auto mask1:save)
+        {
+            new_dp[mask1]=ok(mask1,pos);
+            ll res=new_dp[mask1];
+            if (new_dp[mask1]==-oo) continue;
+            for(auto mask2:save)
+            if ((mask1&mask2)==0 && dp[mask2]!=-oo)
+                new_dp[mask1]=max(new_dp[mask1],res+dp[mask2]);
+            ans=max(ans,new_dp[mask1]);
+        }
+        dp=new_dp;
+    }
+    if (ans==-1) cout<<tmp<<endl;
+    else
+        if ((ans==0 && tmp>=0) || ans>0) cout<<ans<<endl;
+        else cout<<tmp<<endl;
+}
+int main() {
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    int t; t=1 ;
+    while (t--)
+        solve();//cout<<solve()<<endl;
+    return 0;
+}

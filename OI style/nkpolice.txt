@@ -1,0 +1,147 @@
+//https://vnoi.info/wiki/algo/graph-theory/Depth-First-Search-Tree.md#b%C3%A0i-to%C3%A1n-4
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const ll maxN=1e5+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+const ll base=31;
+int num[maxN],low[maxN],tail[maxN],father[maxN][20],n,m,depth[maxN],child[maxN],q,dem;
+vector <int> check[maxN];
+bool node[maxN];
+////////////////// binary jumping
+void calc_father()
+{
+    forw(i,1,18)
+        forw(u,1,n)
+            father[u][i]=father[father[u][i-1]][i-1];
+    return;
+}
+int findFather(int v, int u) // find father of v
+{
+    forb(i,18,0)
+        if (depth[father[v][i]]>depth[u]) v=father[v][i];
+    return v;
+}
+////////////////// tarjan
+void dfs(int u)
+{
+    num[u]=low[u]=++dem;
+    for(int v:check[u])
+    if (v!=father[u][0])
+    {
+        if (!num[v])
+        {
+            depth[v]=depth[u]+1;
+            father[v][0]=u;
+            dfs(v);
+            low[u]=min(low[u],low[v]);
+            child[u]++;
+            if (u==father[u][0])
+            {
+                if (child[u]>=2) node[u]=true;
+            }
+            else
+                if (low[v]>=num[u]) node[u]=true;
+        }
+        else
+            low[u]=min(low[u],num[v]);
+    }
+    tail[u]=dem;
+}
+int isChild(int v, int u)
+{
+    if (num[u]<=num[v] && num[v]<=tail[u]) return true;
+    return false;
+}
+
+///////////////////// queries
+bool go(int a, int b, int u, int v)
+{
+    if (num[v]<num[u]) swap(u,v);
+    if (low[v]<num[v]) return true;
+    if (!(isChild(a,v)^isChild(b,v))) return true;
+    return false;
+}
+bool go(int a, int b, int c)
+{
+    if (!node[c]) return true;
+    int father_a=0, father_b=0;
+    if (isChild(a,c))
+        father_a=findFather(a,c);
+    if (isChild(b,c))
+        father_b=findFather(b,c);
+    if (!father_a && !father_b) return true;
+    if (father_a==father_b) return true;
+    if (!father_a && low[father_b]<num[c]) return true;
+    if (!father_b && low[father_a]<num[c]) return true;
+    if (father_a && father_b && low[father_a]<num[c] && low[father_b]<num[c]) return true;
+    return false;
+}
+
+///////////////////// process
+void print(bool x)
+{
+    if (x) cout<<"yes"<<endl;
+    else cout<<"no"<<endl;
+}
+void solve()
+{
+    cin>>n>>m;
+    forw(i,1,m)
+    {
+        int u,v;
+        cin>>u>>v;
+        check[u].pb(v);
+        check[v].pb(u);
+    }
+    forw(i,1,n)
+        if (!num[i])
+        {
+            depth[i]=1;
+            father[1][0]=1;
+            dfs(1);
+        }
+    calc_father();
+    cin>>q;
+    while (q--)
+    {
+        int res,a,b,c,u,v;
+        cin>>res;
+        if (res==1)
+        {
+            cin>>a>>b>>u>>v;
+            print(go(a,b,u,v));
+        }
+        else
+        {
+            cin>>a>>b>>c;
+            print(go(a,b,c));
+        }
+    }
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

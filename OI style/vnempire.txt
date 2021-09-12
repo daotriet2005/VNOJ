@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+typedef pair<int, pair<int, int> > pii;
+#define forw(i,a,b) for (int i=a;i<=b;i++)
+#define forb(i,a,b) for (int i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=727355608;
+const ll maxN=1e5+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+const ll base=31;
+int n,m,father[maxN];
+int findFather(int u)
+{
+    if (father[u]==u) return u;
+    return father[u]=findFather(father[u]);
+}
+void solve()
+{
+    cin>>n;
+    priority_queue<pii, vector <pii>, greater<pii> > p;
+    vector <data> x,y,z;
+    forw(i,1,n)
+    {
+        int xx,yy,zz;
+        father[i]=i;
+        cin>>xx>>yy>>zz;
+        x.pb({xx,i});
+        y.pb({yy,i});
+        z.pb({zz,i});
+    }
+    sort(all(x));
+    sort(all(y));
+    sort(all(z));
+    forw(i,0,n-2)
+    {
+        int v1,v2,u,v;
+        v1=x[i].fi;
+        u=x[i].se;
+        v2=x[i+1].fi;
+        v=x[i+1].se;
+        p.pu({abs(v2-v1),{u,v}});
+        //////
+        v1=y[i].fi;
+        u=y[i].se;
+        v2=y[i+1].fi;
+        v=y[i+1].se;
+        p.pu({abs(v2-v1),{u,v}});
+        //////
+        v1=z[i].fi;
+        u=z[i].se;
+        v2=z[i+1].fi;
+        v=z[i+1].se;
+        p.pu({abs(v2-v1),{u,v}});
+    }
+    int res=0;
+    ll ans=0;
+    while (res<n-1 && !p.empty())
+    {
+        int val=p.top().fi;
+        int u=p.top().se.fi;
+        int v=p.top().se.se;
+        p.pop();
+        int father_u=findFather(u);
+        int father_v=findFather(v);
+        if (father_u!=father_v)
+        {
+            ans+=val;
+            father[father_u]=father_v;
+            res++;
+        }
+    }
+    cout<<ans<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

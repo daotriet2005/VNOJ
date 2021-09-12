@@ -1,0 +1,109 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef pair<int, int> data;
+#define pu push
+#define pb push_back
+#define fi first
+#define se second
+typedef long long int ll;
+const int tx[4]={1,0,-1,0};
+const int ty[4]={0,1,0,-1};
+//2 N
+//3 W
+ll num[105][105],low[105][105],dem,n,m,count1,save[105][105],dp[100005],tong[100005],super;
+bool check[100005];
+char a[105][105];
+stack<data> res;
+vector <data> out[10005];
+void visit(int x, int y)
+{
+    num[x][y]=low[x][y]=++dem;
+    res.pu(data(x,y));
+  // cout<<x<<" "<<y<<endl;
+    for (int i=0;i<4;i++)
+        if (i==0 || i==1 || (i==2 && a[x][y]=='N') || (i==3 && a[x][y]=='W'))
+        {
+            int rx=x+tx[i];
+            int ry=y+ty[i];
+            //cout<<x<<" "<<y<<" "<<num[1][1]<<" "<<num[1][2]<<" "<<i<<" "<<rx<<" "<<ry<<" detect"<<endl;
+            if (rx>0 && rx<=n && ry>0 && ry<=m && a[rx][ry]!='#')
+            if (num[rx][ry]) low[x][y]=min(low[x][y],num[rx][ry]);
+            else
+            {
+                //cout<<rx<<" "<<ry<<" "<<num[rx][ry]<<endl;
+                visit(rx,ry);
+                low[x][y]=min(low[x][y],low[rx][ry]);
+            }
+        }
+    if (num[x][y]==low[x][y])
+    {
+        count1++;
+        int rx,ry;
+        do
+        {
+            rx=res.top().fi;
+            ry=res.top().se;
+            res.pop();
+            num[rx][ry]=low[rx][ry]=1e9;
+            save[rx][ry]=count1;
+            if (a[rx][ry]!='W' && a[rx][ry]!='N')
+                tong[count1]+=a[rx][ry]-'0';
+            out[count1].pb(data(rx,ry));
+        }while (rx!=x || ry!=y);
+    }
+
+}
+void dfs(int u)
+{
+    check[u]=true;
+    for (int i=0;i<out[u].size();i++)
+    {
+        int x=out[u][i].fi;
+        int y=out[u][i].se;
+        for (int i=0;i<4;i++)
+            if (i==0 || i==1 || (i==2 && a[x][y]=='N') || (i==3 && a[x][y]=='W'))
+            {
+                int rx=x+tx[i];
+                int ry=y+ty[i];
+                if (rx>=1 && rx<=n && ry>=1 && ry<=m && a[rx][ry]!='#')
+                    if (save[rx][ry]!=save[x][y] && !check[save[rx][ry]])
+                        if (dp[save[rx][ry]]<dp[u]+tong[save[rx][ry]])
+                        {
+                            dp[save[rx][ry]]=dp[u]+tong[save[rx][ry]];
+                            super=max(super,dp[save[rx][ry]]);
+                            dfs(save[rx][ry]);
+                        }
+            }
+    }
+    check[u]=false;
+}
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cin>>n>>m;
+    for (int i=1;i<=n;i++)
+        for (int j=1;j<=m;j++)
+            cin>>a[i][j];
+    visit(1,1);
+   /* for (int i=1;i<=count1;i++)
+    {
+        for (int j=0;j<out[i].size();j++)
+            cout<<out[i][j].fi<<" "<<out[i][j].se<<" // ";
+        cout<<endl;
+    }
+    for (int i=1;i<=n;i++)
+    {
+        for (int j=1;j<=m;j++)
+            cout<<save[i][j]<<" ";
+        cout<<endl;
+    }*/
+    for (int i=1;i<=count1;i++)
+        dp[i]=-1;
+    super=dp[save[1][1]]=tong[save[1][1]];
+    dfs(save[1][1]);
+   // for (int i=1;i<=6;i++)
+    //    cout<<dp[i]<<endl;
+    cout<<super;
+    return 0;
+}

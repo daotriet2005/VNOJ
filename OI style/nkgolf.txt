@@ -1,0 +1,104 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,pair<ll,ll> >data;
+typedef pair<ll, string> super;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pub push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define reset(a) memset(a,0,sizeof(a))
+ll n,m,h1[1005][1005],h2[1005][1005],a[1005][1005],l[1005],r[1005],ans,h[1005];
+void solve()
+{
+    fore(i,1,n)
+    {
+        deque<int> p;
+        fore(j,1,m)
+        {
+            while (!p.empty() && h1[i][p.back()]>=h1[i][j]) p.pob();
+            if (p.empty()) l[j]=1;
+            else l[j]=p.back();
+            p.pub(j);
+        }
+        p.clear();
+        forw(j,m,1)
+        {
+            while (!p.empty() && h1[i][j]<=h1[i][p.back()]) p.pob();
+            if (p.empty()) r[j]=m;
+            else r[j]=p.back()-1;
+            p.pub(j);
+        }
+        fore(j,1,m)
+        ans=max(ans,h1[i][j]*(r[j]-l[j]+1));
+        p.clear();
+        fore(j,1,m)
+        {
+            while (!p.empty() && h2[i][p.back()]>=h2[i][j]) p.pob();
+            if (p.empty()) l[j]=1;
+            else l[j]=p.back()+1;
+            p.pub(j);
+        }
+        p.clear();
+        forw(j,m,1)
+        {
+            while (!p.empty() && h2[i][j]<=h2[i][p.back()]) p.pob();
+            if (p.empty()) r[j]=m;
+            else r[j]=p.back();
+            p.pub(j);
+        }
+        fore(j,1,m)
+            ans=max(ans,h2[i][j]*(r[j]-l[j]+1));
+    }
+}
+int main()
+{
+    fast;
+    cin>>n>>m;
+    fore(i,1,n)
+        fore(j,1,m)
+            cin>>a[i][j];
+    fore(i,1,n)
+    {
+        fore(j,1,m)
+        if (a[i][j-1]<=a[i][j] || j==1)
+            if (a[i][j]>=a[i-1][j] && a[i][j-1]>=a[i-1][j-1])
+                h1[i][j]=h1[i-1][j]+1;
+            else h1[i][j]=1;
+        else h1[i][j]=0;
+        forw(j,m,1)
+        if (a[i][j]<=a[i][j+1] || j==m)
+            if (a[i][j]>=a[i-1][j] && a[i][j+1]>=a[i-1][j+1])
+                h2[i][j]=h2[i-1][j]+1;
+            else h2[i][j]=1;
+        else h2[i][j]=0;
+        fore(j,1,m)
+        {
+            if (a[i][j]>=a[i-1][j]) h[j]+=1;
+            else h[j]=1;
+            ans=max(ans,h[j]);
+        }
+    }
+    /*cout<<"/////"<<endl;
+    fore(i,1,n)
+    {
+        fore(j,1,m) cout<<h1[i][j]<<" ";
+        cout<<endl;
+    }
+    cout<<"/////"<<endl;
+    fore(i,1,n)
+    {
+        fore(j,1,m) cout<<h2[i][j]<<" ";
+        cout<<endl;
+    }*/
+    solve();
+    cout<<ans;
+    return 0;
+}

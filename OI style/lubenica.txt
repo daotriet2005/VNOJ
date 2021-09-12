@@ -1,0 +1,113 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const ll maxN=1e5+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+const ll base=31;
+int max1[maxN][18],min1[maxN][18];
+int father[maxN][18],d[maxN],n,m,u,v,z;
+vector <data> check[maxN];
+void mini(int &a, int b)
+{
+    a=min(a,b);
+    return;
+}
+void maxi(int &a, int b)
+{
+    a=max(a,b);
+    return;
+}
+void dfs(int u, int up, int depth, ll length)
+{
+    d[u]=depth;
+    father[u][0]=up;
+    max1[u][0]=min1[u][0]=length;
+    forw(i,1,17)
+    {
+        father[u][i]=father[father[u][i-1]][i-1];
+        min1[u][i]=min(min1[u][i-1],min1[father[u][i-1]][i-1]);
+        max1[u][i]=max(max1[u][i-1],max1[father[u][i-1]][i-1]);
+    }
+    for(auto res:check[u])
+    if (res.fi!=up)
+        dfs(res.fi,u,depth+1,res.se);
+    return;
+}
+void LCA(int a, int b)
+{
+    if (d[a]>d[b]) swap(a,b);
+    int k=d[b]-d[a];
+    int mi=INT_MAX;
+    int ma=0;
+    forb(i,17,0)
+    if (k & (1<<i))
+    {
+        maxi(ma,max1[b][i]);
+        mini(mi,min1[b][i]);
+        b=father[b][i];
+    }
+    if (b==a)
+    {
+        cout<<mi<<" "<<ma<<endl;
+        return;
+    }
+    forb(i,17,0)
+    {
+        int new_a=father[a][i];
+        int new_b=father[b][i];
+        if (new_a!=new_b)
+        {
+            maxi(ma,max(max1[a][i],max1[b][i]));
+            mini(mi,min(min1[a][i],min1[b][i]));
+            a=new_a;
+            b=new_b;
+        }
+    }
+    maxi(ma,max(max1[a][0],max1[b][0]));
+    mini(mi,min(min1[a][0],min1[b][0]));
+    cout<<mi<<" "<<ma<<endl;
+    return ;
+}
+void solve()
+{
+    cin>>n;
+    forw(i,1,n-1)
+    {
+        cin>>u>>v>>z;
+        check[u].pb({v,z});
+        check[v].pb({u,z});
+    }
+    dfs(1,1,0,0);
+    cin>>m;
+    forw(i,1,m)
+    {
+        cin>>u>>v;
+        LCA(u,v);
+    }
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

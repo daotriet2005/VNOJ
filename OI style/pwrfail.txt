@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<double,ll> data;
+typedef pair<ll, pair<ll, ll> > pii;
+typedef vector <ll> vi;
+#define forw(i,a,b) for (ll i=a;i<=(b);i++)
+#define forb(i,a,b) for (ll i=a;i>=(b);i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9;
+const int base=31;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+// custom
+const ll maxN=1000+5;
+////////
+vector <int> save;
+bool vis[maxN],a[maxN][maxN];
+ll x[maxN],y[maxN],n,m,u,v;
+double dp[maxN],limit;
+double calc(int u, int v)
+{
+    if (a[u][v]) return 0;
+    double res=sqrt((x[u]-x[v])*(x[u]-x[v])+(y[u]-y[v])*(y[u]-y[v]));
+    if (res>limit) return 1e9;
+    return res;
+}
+void dijk()
+{
+    forw(i,1,n) dp[i]=1e9;
+    priority_queue<data, vector<data>, greater<data> > p;
+    p.pu({dp[1]=0,1});
+    while (!p.empty())
+    {
+        int u=p.top().se;
+        double val=p.top().fi;
+        p.pop();
+        if (val>dp[u]) continue;
+        vis[u]=1;
+        forw(v,1,n)
+        if (!vis[v] && v!=u)
+        {
+            double dodai=calc(u,v);
+            //cout<<u<<" "<<v<<" "<<dodai<<endl;
+            if (val+dodai<dp[v])
+            {
+                dp[v]=val+dodai;
+                p.pu({dp[v],v});
+            }
+        }
+    }
+    if (dp[n]>=1e9) cout<<-1;
+    else cout<<(ll)(dp[n]*1000)<<endl;
+}
+void solve()
+{
+    cin>>n>>m;
+    cin>>limit;
+    forw(i,1,n)
+        cin>>x[i]>>y[i];
+    forw(i,1,m)
+    {
+        cin>>u>>v;
+        a[u][v]=a[v][u]=true;
+    }
+    dijk();
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

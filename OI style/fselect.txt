@@ -1,0 +1,109 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const ll maxN=2e5+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+const ll base=31;
+int father[maxN][20],d[maxN],n,k;
+vector <int> check[maxN],group[maxN];
+void dfs(int u, int up, int depth)
+{
+    d[u]=depth;
+    father[u][0]=up;
+    forw(i,1,18)
+        father[u][i]=father[father[u][i-1]][i-1];
+    for(int v:check[u])
+    if (v!=up)
+        dfs(v,u,depth+1);
+    return;
+}
+int jump(int node, int k)
+{
+    forb(i,18,0)
+    if (k & (1<<i))
+        node=father[node][i];
+    return node;
+}
+int LCA(int a, int b)
+{
+    if (d[a]>d[b]) swap(a,b);
+    b=jump(b,d[b]-d[a]);
+    if (a==b) return a;
+    forb(i,18,0)
+    {
+        int new_a=father[a][i];
+        int new_b=father[b][i];
+        if (new_a!=new_b)
+        {
+            a=new_a;
+            b=new_b;
+        }
+    }
+    return father[a][0];
+}
+int distance(int x)
+{
+    int a=group[x][0],save=0;
+    int res=0;
+    forw(i,1,group[x].size()-1)
+    {
+        int b=group[x][i];
+        int node=LCA(a,b);
+        int dist=d[a]+d[b]-2*d[node];
+        if (dist>res)
+        {
+            res=dist;
+            save=b;
+        }
+    }
+    a=save;
+    forw(i,0,group[x].size()-1)
+    {
+        int b=group[x][i];
+        int node=LCA(a,b);
+        int dist=d[a]+d[b]-2*d[node];
+        res=max(res,dist);
+    }
+    return res;
+}
+void solve()
+{
+    cin>>n>>k;
+    forw(i,1,n)
+    {
+        int res,v;
+        cin>>res>>v;
+        check[i].pb(v);
+        check[v].pb(i);
+        group[res].pb(i);
+    }
+    dfs(0,0,0);
+    forw(i,1,k)
+        cout<<distance(i)<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

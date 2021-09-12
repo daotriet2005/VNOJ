@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<ll, ll> data;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll MOD=1e9+7;
+const ll maxN=(1<<20)+1;
+ll a[25][25],n,k;
+data dp[maxN];
+void setup()
+{
+    cin>>n;
+    fore(i,0,n-1)
+        fore(j,0,n-1)
+            cin>>a[i][j];
+    //fore (i,0,(1<<n)-1) dp[0].second=1;
+    dp[0].se=1;
+    fore(bitmask,1,(1<<n)-1)
+    {
+        int k=__builtin_popcount(bitmask)-1;
+        fore(i,0,n-1)
+        if ((1<<i) & bitmask)
+            if (dp[bitmask].fi<dp[bitmask^(1<<i)].fi+a[i][k])
+            {
+                dp[bitmask].fi=dp[bitmask^(1<<i)].fi+a[i][k];
+                dp[bitmask].se=dp[bitmask^(1<<i)].se;
+            }
+            else
+                if (dp[bitmask].fi==dp[bitmask^(1<<i)].fi+a[i][k])
+                    dp[bitmask].se+=dp[bitmask^(1<<i)].se;
+    }
+    cout<<dp[(1<<n)-1].fi<<" "<<dp[(1<<n)-1].se;
+    return;
+}
+int main() {
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    int t; t=1 ;
+    while (t--)
+        setup();//cout<<solve()<<endl;
+    return 0;
+}

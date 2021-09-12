@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> pii;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define pb push_back
+const ll oo=1e18;
+const ll MOD=1e9+7;
+string s;
+ll dp[1005][1005],out;
+int main()
+{
+    fast;
+    cin>>s;
+    int n=s.length()-1;
+    fore(i,0,n-1)
+    {
+    if (s[i]==s[i+1])
+        dp[i][i+1]=true;
+    dp[i][i]=true;
+    }
+    fore(i,2,n)
+        forw(j,i-2,0)
+        {
+            if (s[i]==s[j] && dp[j+1][i-1]) dp[j][i]=true;
+            fore(k,j+1,i-2)
+            if (dp[j][k] && dp[k+1][i])
+            {
+                dp[j][i]=true;
+                break;
+            }
+        }
+    //cout<<dp[0][2]<<endl;
+    fore(i,1,n)
+        fore(j,0,i-1)
+        if (dp[j][i]) {
+            //cout<<i<<" "<<j<<endl;
+            out++;
+        }
+    cout<<out;
+    return 0;
+}

@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> pi;
+typedef pair<ll, pair<ll, ll> > pii;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const int base=31;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+// custom
+const ll maxN=105;
+/////
+ll a[maxN][maxN],n,ans;
+bool visit[maxN];
+void solve()
+{
+    cin>>n;
+    forw(i,1,n)
+        forw(j,1,n)
+        {
+            cin>>a[i][j];
+            if (!a[i][j]) a[i][j]=oo;
+        }
+    forw(k,1,n)
+        forw(i,1,n)
+            forw(j,1,n)
+                if (a[i][k]+a[k][j]<a[i][j]) a[i][j]=a[i][k]+a[k][j];
+    visit[1]=true;
+    ll res=1;
+    forw(i,1,n-2)
+    {
+        ll length=oo;
+        ll pos=n;
+        forw(j,1,n-1)
+        if (!visit[j])
+            if (a[res][j]<length)
+            {
+                length=a[res][j];
+                pos=j;
+            }
+        ans+=length;
+        res=pos;
+        visit[pos]=true;
+    }
+    ans+=a[res][n];
+    cout<<ans<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

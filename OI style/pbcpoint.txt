@@ -1,0 +1,97 @@
+//https://onlylove97.wordpress.com/2014/09/16/pbcpoint-vnoi/
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<double,ll> data;
+typedef pair<ll, pair<ll, ll> > pii;
+typedef vector <ll> vi;
+#define forw(i,a,b) for (ll i=a;i<=(b);i++)
+#define forb(i,a,b) for (ll i=a;i>=(b);i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e8;
+const ll mod=1e9;
+const int base=31;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+// custom
+const ll maxN=30+5;
+const ll limit=2e3;
+////////
+ll ans,up[limit+5],dow[limit+5],ri[limit+5],le[limit+5],x,y,n;
+bool a[limit+5][limit+5];
+void solve()
+{
+    cin>>n;
+    forw(i,0,limit)
+    {
+        up[i]=ri[i]=-oo;
+        dow[i]=le[i]=oo;
+    }
+    queue<data> p;
+    forw(i,1,n)
+    {
+        cin>>x>>y;
+        x+=1e3;
+        y+=1e3;
+        p.pu({x,y});
+    }
+    while (!p.empty())
+    {
+        x=p.fr().fi;
+        y=p.fr().se;
+        p.pop();
+        //cout<<x<<" "<<y<<endl;
+        a[x][y]=true;
+        if (x<le[y])
+        {
+            if (le[y]!=oo)
+                forw(i,x+1,le[y]-1)
+                    p.pu({i,y});
+            le[y]=x;
+        }
+        if (ri[y]<x)
+        {
+            if (ri[y]!=-oo)
+                forw(i,ri[y]+1,x-1)
+                    p.pu({i,y});
+            ri[y]=x;
+        }
+        if (y<dow[x])
+        {
+            if (dow[x]!=oo)
+                forw(i,y+1,dow[x]-1)
+                    p.pu({x,i});
+            dow[x]=y;
+        }
+        if (up[x]<y)
+        {
+            if (up[x]!=-oo)
+                forw(i,up[x]+1,y-1)
+                    p.pu({x,i});
+            up[x]=y;
+        }
+    }
+    forw(i,0,limit)
+        forw(j,0,limit)
+            ans+=a[i][j];
+    cout<<ans<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

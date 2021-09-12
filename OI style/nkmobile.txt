@@ -1,0 +1,72 @@
+#include <bits/stdc++.h>
+//#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e14;
+const ll mod=1e9+7;
+const ll maxN=2e5+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+const ll base=31;
+int fen[1048][1048],n;
+void update(int x, int y, int val)
+{
+    for(;x<=n+1;x+=(x & -x))
+        for(int v=y;v<=n+1;v+=(v & -v))
+            fen[x][v]+=val;
+    return;
+}
+int get(int x, int y)
+{
+    ll ans=0;
+    for(;x>0;x-=(x & -x))
+        for(int v=y;v>0;v-=(v & -v))
+            ans+=fen[x][v];
+    return ans;
+}
+void solve()
+{
+    int res,x,y,z,x11,y11,x22,y22;
+    cin>>res>>n;
+    while (cin>>res && res!=3)
+    {
+        if (res==1)
+        {
+            cin>>x>>y>>z;
+            x++;
+            y++;
+            update(x,y,z);
+        }
+        else
+        {
+            cin>>x11>>y11>>x22>>y22;
+            x11++;
+            y11++;
+            x22++;
+            y22++;
+            cout<<get(x22,y22)+get(x11-1,y11-1)-get(x22,y11-1)-get(x11-1,y22)<<endl;
+        }
+    }
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

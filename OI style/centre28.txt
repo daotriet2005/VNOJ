@@ -1,0 +1,88 @@
+// http://www.usaco.org/current/data/sol_pump_gold_dec19.html
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<double,ll> data;
+typedef pair<ll, pair<ll, ll> > pii;
+typedef vector <ll> vi;
+#define forw(i,a,b) for (ll i=a;i<=(b);i++)
+#define forb(i,a,b) for (ll i=a;i>=(b);i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9;
+const int base=31;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+// custom
+const ll maxN=3e4+5;
+////////
+ll dp[maxN][3],ways[maxN][3],n,m;
+vector <data> check[maxN];
+void dijk(int s, int x)
+{
+    forw(i,1,n) dp[i][x]=oo;
+    priority_queue<data, vector <data>, greater<data>> p;
+    p.pu({0,s});
+    dp[s][x]=0;
+    ways[s][x]=1;
+    while (!p.empty())
+    {
+        ll val=p.top().fi;
+        ll u=p.top().se;
+        p.pop();
+        if (val>dp[u][x]) continue;
+        for(auto res:check[u])
+        {
+            ll dodai=res.fi;
+            ll v=res.se;
+            if (val+dodai<dp[v][x])
+            {
+                ways[v][x]=ways[u][x];
+                p.pu({dp[v][x]=val+dodai,v});
+            }
+            else
+                if (val+dodai==dp[v][x]) ways[v][x]+=ways[u][x];
+        }
+    }
+}
+void solve()
+{
+    cin>>n>>m;
+    forw(i,1,m)
+    {
+        ll u,v,c;
+        cin>>u>>v>>c;
+        check[u].pb({c,v});
+        check[v].pb({c,u});
+    }
+    dijk(1,1);
+    dijk(n,2);
+    vector <int> ans;
+    forw(i,1,n)
+    {
+        //cout<<dp[i][1]<<" "<<dp[i][2]<<" "<<ways[i][1]<<" "<<ways[i][2]<<endl;
+        if (dp[i][1]+dp[i][2]==dp[n][1] && ways[i][1]*ways[i][2]==ways[n][1]) continue;
+        ans.pb(i);
+    }
+    cout<<ans.size()<<endl;
+    for(int u:ans) cout<<u<<" ";
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

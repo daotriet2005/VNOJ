@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll MOD=1e9+7;
+const ll maxN=1e4+5;
+bool kt[maxN];
+ll sum[maxN],n,k,ans;
+vector <int> check[maxN];
+void dfs(int u)
+{
+    kt[u]=true;
+    sum[u]=1;
+    for(auto v:check[u])
+    if (!kt[v])
+    {
+        dfs(v);
+        sum[u]+=sum[v];
+    }
+    if (sum[u]>=k)
+    {
+        ans++;
+        sum[u]=0;
+    }
+    return;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    cin>>k>>n;
+    forw(i,2,n)
+    {
+        int u;
+        cin>>u;
+        check[u].pb(i);
+    }
+    dfs(1);
+    cout<<ans;
+    return 0;
+}

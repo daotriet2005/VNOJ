@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<double,ll> data;
+typedef pair<ll, pair<ll, ll> > pii;
+typedef vector <ll> vi;
+#define forw(i,a,b) for (ll i=a;i<=(b);i++)
+#define forb(i,a,b) for (ll i=a;i>=(b);i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9;
+const int base=31;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+// custom
+const ll maxN=1000+5;
+////////
+vector <int> save;
+bool ok[505];
+ll a[505][505],P,n,m,x,u,v,c;
+void solve()
+{
+    cin>>P>>n>>m;
+    forw(i,1,n)
+    {
+        cin>>x;
+        ok[x]=true;
+        save.pb(x);
+    }
+    forw(i,1,P)
+        forw(j,1,P)
+            if (i!=j)
+            a[i][j]=oo;
+    forw(i,1,m)
+    {
+        cin>>u>>v>>c;
+        a[u][v]=a[v][u]=c;
+    }
+    //floyd
+    forw(k,1,P)
+        forw(i,1,P)
+            forw(j,1,P)
+                if (a[i][k]+a[k][j]<a[i][j])
+                    a[i][j]=a[i][k]+a[k][j];
+    long double ans=1e9;
+    ll pos=0;
+    forw(i,1,P)
+    {
+        long double res=0;
+        for(int v:save)
+            res+=a[i][v];
+        if (res/n<ans)
+        {
+            ans=res/n;
+            pos=i;
+        }
+    }
+    cout<<pos<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

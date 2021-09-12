@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+//typedef pair<ll, ll> data;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll MOD=1e9+7;
+const ll maxN=2e5+5;
+ll a[20],n,dp[100005][20],k;
+void setup()
+{
+    cin>>n>>k;
+    fore(i,0,n-1) cin>>a[i];
+    fore(i,0,(1<<n)-1)
+        fore(j,0,n-1) dp[i][j]=-1;
+    fore(i,0,n-1)
+        dp[(1<<i)][i]=1;
+    return;
+}
+ll path(int bitmask, int cur)
+{
+    if (dp[bitmask][cur]!=-1) return dp[bitmask][cur];
+    int res= bitmask &~(1<<cur);
+    fore(i,0,n-1)
+    dp[bitmask][cur]=0;
+    fore(i,0,n-1)
+    if (res & (1<<i))
+        if (abs(a[i]-a[cur])>k)
+        dp[bitmask][cur]+=path(res,i);
+    return dp[bitmask][cur];
+}
+ll solve()
+{
+    setup();
+    ll ans=0;
+    fore(i,0,n-1)
+        ans+=path((1<<n)-1,i);
+    return ans;
+}
+int main() {
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    int t; t=1 ;
+    while (t--)
+        cout<<solve();//cout<<solve()<<endl;
+    return 0;
+}

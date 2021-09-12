@@ -1,0 +1,148 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const ll maxN=1500+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,0};
+const ll base=31;
+queue<vector <int> > p;
+int dp[1005][1005][5],ways[1005][1005][5],n,m,a[1005][1005];
+vector < int > save[3];
+bool valid(int x, int y)
+{
+    if (1<=x && x<=n+1)
+        if (1<=y && y<=m) return true;
+    return false;
+}
+int detect(int x, int y, int from)
+{
+    // from:
+    // 1: from up
+    // 2: from right
+    // 3: from down
+    // 4: from left
+
+    // type:
+    // a[i][j] : true
+    //      1 : left - up
+    //      2 : right - down
+    // a[i][j] : false
+    //      3 : left - down
+    //      4 : right - up
+    if (a[x][y])
+    {
+        if (from==1 || from==4) return 1;
+        else return 2;
+    }
+    else
+    {
+        if (from==4 || from==3) return 3;
+        else return 4;
+    }
+}
+void go(int x, int y, int res)
+{
+    if (res==1)
+    {
+        save[1]={-1,0,3}; // go up
+        save[2]={0,-1,2}; // go left
+    }
+    if (res==2)
+    {
+        save[1]={0,1,4}; // go right
+        save[2]={1,0,1}; // go down
+    }
+    if (res==3)
+    {
+        save[1]={0,-1,2}; // go left
+        save[2]={1,0,1}; // go down
+    }
+    if (res==4)
+    {
+        save[1]={-1,0,3}; // go up
+        save[2]={0,1,4}; // go right
+    }
+    forw(i,1,2)
+    {
+        int xx=x+save[i][0];
+        int yy=y+save[i][1];
+        int tmp=save[i][2];
+        if (!valid(xx,yy)) continue;
+        int smt=detect(xx,yy,tmp);
+        if (!dp[xx][yy][smt])
+        {
+            dp[xx][yy][smt]=dp[x][y][res]+1;
+            ways[xx][yy][smt]=ways[x][y][res];
+            p.pu({xx,yy,smt});
+        }
+        else
+            if (dp[x][y][res]+1==dp[xx][yy][smt])
+                ways[xx][yy][smt]+=ways[x][y][res];
+    }
+}
+void dijk()
+{
+    forw(i,1,m)
+    {
+        int res=detect(1,i,1);
+        dp[1][i][res]=1;
+        p.pu({1,i,res});
+        ways[1][i][res]=1;
+    }
+    while (!p.empty())
+    {
+        int x=p.fr()[0];
+        int y=p.fr()[1];
+        int res=p.fr()[2];
+        p.pop();
+        if (x==n+1) continue;
+        go(x,y,res);
+    }
+    int ans=0;
+    int min1=INT_MAX;
+    forw(i,1,m)
+    forw(k,1,4)
+        if (dp[n+1][i][k]!=0 && dp[n+1][i][k]-1<min1)
+        {
+            min1=dp[n+1][i][k]-1;
+            ans=ways[n+1][i][k];
+        }
+        else
+            if (dp[n+1][i][k]-1==min1)
+                ans+=ways[n+1][i][k];
+    if (min1!=INT_MAX)
+        cout<<min1<<" "<<ans<<endl;
+    else cout<<"0 0"<<endl;
+}
+void solve()
+{
+    cin>>n>>m;
+    forw(i,1,n)
+        forw(j,1,m) cin>>a[i][j];
+    dijk();
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

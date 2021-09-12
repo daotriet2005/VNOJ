@@ -1,0 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    long long S;
+    cin>>S;
+    cout<<(1678*S*S*S + 3117*S*S + 88*S -345*(S%2) - 320*(S%3) - 90*(S % 4) -288*((S*S*S-S*S+S)%5))/240;
+    return 0;
+}

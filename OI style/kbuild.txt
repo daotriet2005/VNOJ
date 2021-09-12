@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("O3")
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const ll maxN=2e5+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+const ll base=31;
+int father[maxN],new_father[maxN],n,m,u,v,d[maxN],ans;
+vector <int> check[maxN];
+void dfs(int u, int up, int depth)
+{
+    d[u]=depth;
+    father[u]=up;
+    for(int v:check[u])
+        if (v!=up)
+            dfs(v,u,depth+1);
+    return;
+}
+int findFather(int a)
+{
+    if (a==new_father[a]) return a;
+    return new_father[a]=findFather(new_father[a]);
+}
+void LCA(int a, int b)
+{
+    while (a!=b)
+    {
+        a=findFather(a);
+        b=findFather(b);
+        if (a==b) return;
+        int ha=d[a];
+        int hb=d[b];
+        if (ha>=hb)
+        {
+            a=new_father[a]=father[a];
+            ans--;
+        }
+        if (ha<=hb)
+        {
+            b=new_father[b]=father[b];
+            ans--;
+        }
+    }
+}
+void solve()
+{
+    cin>>n;
+    forw(i,1,n-1)
+    {
+        cin>>u>>v;
+        check[u].pb(v);
+        check[v].pb(u);
+    }
+    dfs(1,1,1);
+    forw(i,1,n) new_father[i]=i;
+    cin>>m;
+    ans=n-1;
+    forw(i,1,m)
+    {
+        cin>>u>>v;
+        LCA(u,v);
+    }
+    cout<<ans<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    ll t=1; //cin>>t;
+    while (t--) solve();
+    return 0;
+}

@@ -1,0 +1,116 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<int, int> data;
+#define fore(i,a,b) for (ll i=a;i<=b;i++)
+#define forw(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll maxN = 2e5+5;
+const ll oo = 1e18;
+const ll mod=1e9+7;
+data dp[105][8][8];
+int n,x;
+vector <int> save[105];
+bool check(int mask1, int mask2)
+{
+    if (((1<<0)&mask1) && ((1<<2)&mask2)) return false;
+    if (((1<<2)&mask1) && ((1<<0)&mask2)) return false;
+    return true;
+}
+bool ok(int mask1, int mask2, int mask3)
+{
+    if ((1<<0)&mask3)
+    {
+        if ((1<<1)&mask1) return false;
+        if ((1<<2)&mask2) return false;
+    }
+    if ((1<<1)&mask3)
+    {
+        if ((1<<0)&mask1) return false;
+        if ((1<<2)&mask1) return false;
+    }
+    if ((1<<2)&mask3)
+    {
+        if ((1<<1)&mask1) return false;
+        if ((1<<0)&mask2) return false;
+    }
+    if (((1<<0)&mask1) && ((1<<2)&mask2)) return false;
+    if (((1<<2)&mask1) && ((1<<0)&mask2)) return false;
+    return true;
+}
+void solve()
+{
+    cin>>n;
+    if (n==1)
+    {
+        cin>>x;
+        if (x==0) cout<<3<<" "<<1;
+        else cout<<2<<" "<<1;
+        return;
+    }
+    fore(i,1,n)
+    {
+        cin>>x; --x;
+        fore(j,0,7)
+        if (!(j & (1<<x)) || x==-1)
+            save[i].pb(j);
+    }
+    int ans=0;
+    for(auto i:save[1])
+        for(auto j:save[2])
+        {
+        if (check(i,j))
+        {
+            int dem=__builtin_popcount(i)+__builtin_popcount(j);
+            dp[2][i][j]={dem,1};
+            ans=max(ans,dp[2][i][j].fi);
+        }
+        }
+    fore(pos,3,n)
+    {
+        for(auto i:save[pos])
+            for(auto j:save[pos-1])
+            {
+                for(auto k:save[pos-2])
+                    if (ok(k,j,i) && dp[pos-1][k][j].se!=0)
+                    {
+                        int dem=__builtin_popcount(i);
+                        if (dp[pos-1][k][j].fi+dem>dp[pos][j][i].fi)
+                        {
+                            dp[pos][j][i].fi=dp[pos-1][k][j].fi+dem;
+                            dp[pos][j][i].se=dp[pos-1][k][j].se;
+                        }
+                        else
+                            if (dp[pos-1][k][j].fi+dem==dp[pos][j][i].fi)
+                                dp[pos][j][i].se+=dp[pos-1][k][j].se;
+
+                    }
+                ans=max(ans,dp[pos][j][i].fi);
+            }
+    }
+    int res=0;
+    fore(i,0,7)
+        fore(j,0,7)
+            if (ans==dp[n][i][j].fi)
+                res+=dp[n][i][j].se;
+    cout<<ans<<" "<<res;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    int t; t=1;
+    //cin>>t;
+    while (t--) solve();
+    return 0;
+}

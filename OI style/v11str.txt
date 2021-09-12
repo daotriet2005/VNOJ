@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+typedef pair<ll,ll> data;
+#define forw(i,a,b) for (ll i=a;i<=b;i++)
+#define forb(i,a,b) for (ll i=a;i>=b;i--)
+#define fast {ios::sync_with_stdio(false); cin.tie(0); }
+#define fi first
+#define se second
+#define pu push
+#define puf push_front
+#define pb push_back
+#define pof pop_front
+#define pob pop_back
+#define fr front
+#define all(a) a.begin(),a.end()
+const ll oo=1e18;
+const ll mod=1e9+7;
+const ll maxN=1e6+5;
+const int tx[4]={0,0,1,-1};
+const int ty[4]={1,-1,0,1};
+const ll base=1<<16+5;
+ll power[maxN],dp[maxN][3];
+void init()
+{
+    power[0]=1;
+    forw(i,1,5e5)
+        power[i]=(power[i-1]*base)%mod;
+}
+ll get_hash(int i, int j, int x)
+{
+    return (dp[j][x]-dp[i-1][x]*power[j-i+1]+mod*mod)%mod;
+}
+void solve()
+{
+    int n,m,x,ans=0;
+    cin>>n>>m;
+    init();
+    forw(i,1,n)
+    {
+        cin>>x;
+        dp[i][1]=(dp[i-1][1]*base+x+1)%mod;
+    }
+    forw(i,1,m)
+    {
+        cin>>x;
+        dp[i][2]=(dp[i-1][2]*base+x+1)%mod;
+    }
+    forw(i,1,m-n+1)
+    {
+        int u1=1;
+        int v1=n;
+        int u2=i;
+        int v2=i+n-1;
+        if (get_hash(u1,v1,1)==get_hash(u2,v2,2) || get_hash(u1+1,v1,1)==get_hash(u2+1,v2,2) || get_hash(u1,v1-1,1)==get_hash(u2,v2-1,2))
+        {
+            ans=i;
+            break;
+        }
+        int l=0;
+        int r=n-1;
+        int res=0;
+        while (l<=r)
+        {
+            int mid=(l+r)/2;
+            if (get_hash(u1,u1+mid,1)==get_hash(u2,u2+mid,2))
+            {
+                res=mid;
+                l=mid+1;
+            }
+            else r=mid-1;
+        }
+        ll pre1=get_hash(u1,u1+res,1);
+        ll pre2=get_hash(u2,u2+res,2);
+        ll suf1=get_hash(u1+res+2,v1,1);
+        ll suf2=get_hash(u2+res+2,v2,2);
+        if (pre1==pre2 && suf1==suf2)
+        {
+            ans=i;
+            break;
+        }
+    }
+    if (!ans) cout<<-1<<endl;
+    else cout<<ans<<endl;
+}
+int main()
+{
+    fast;
+    //freopen("test.inp","r",stdin);
+    //freopen("test.out","w",stdout);
+    int t=1; //cin>>t;
+    while (t--)
+        solve();
+    return 0;
+}
